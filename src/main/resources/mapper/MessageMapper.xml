@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cygao.dao.MessageRepository">
+
+    <insert id="addMessage" parameterType="com.cygao.entity.Message" useGeneratedKeys="true">
+        INSERT INTO message (user_id, user_name, content, message_type, created_at)
+        VALUES (#{message.userId}, #{message.name}, #{message.content}, #{message.messageType.type},
+                #{message.createdAt});
+    </insert>
+
+    <select id="findMessageById" resultType="com.cygao.entity.Message">
+        select user_id, user_name, content, created_at, message_type
+        from message
+        where id = #{id}
+        limit 1;
+    </select>
+
+    <select id="findMessageByDataRange" resultType="com.cygao.entity.Message">
+        select user_id, user_name, content, created_at, message_type
+        from message
+        where created_at &gt; #{from}
+          and created_at &lt; #{to};
+    </select>
+
+    <select id="findMessageByUser" resultType="com.cygao.entity.Message">
+        select user_id, user_name, content, created_at, message_type
+        from message
+        where user_id = #{user.id};
+    </select>
+
+</mapper>

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeTalk在线聊天室</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css"/>
+    <!--CSS RESET-->
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+</head>
+<body>
+<div class="htmleaf-container">
+    <header class="htmleaf-header">
+        <h1>Welcome to FreeTalk...
+            <span>A place to launch an online public chat at whenever you want</span>
+            <!--            <span>一个可以随时开始在线公共聊天的平台</span>-->
+        </h1>
+
+    </header>
+    <div class="demo form-bg">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6">
+                    <form method="post" action="/login" th:action="@{/login}" class="form-horizontal"
+                          onkeydown="if(event.keyCode===13){return false;}">
+                        <div class="heading">Login here</div>
+                        <div class="form-group">
+                            <i class="fa fa-user"></i><input id="username" required name="username" type="text"
+                                                             class="form-control"
+                                                             placeholder="Username">
+                        </div>
+                        <div class="form-group">
+                            <i class="fa fa-lock"></i><input id="password" required name="password" type="password"
+                                                             class="form-control" placeholder="Password"/>
+                        </div>
+                        <div class="form-group">
+                            <button id="submit" type="button" class="btn btn-default"><i
+                                    class="fa fa-arrow-right">Login</i></button>
+                            <span>No account yet? <br><a th:href="@{/register}" class="create_account">Register for one now !!!!</a></span>
+                        </div>
+                        <button id="hidden_button" type="submit" hidden="hidden"></button>
+                        <div class="htmleaf-links">
+                            <a th:href="@{/register}" target="_blank">点击注册</a>
+                            <a href="https://www.cygao.top/" target="_blank"><span>关于作者</span></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    $(function () {
+        var validateUrl = "http://" + window.location.host.toString() + "/api/login";
+
+        $("#submit").click(function () {
+            var username = $("#username").val();
+            var password = $("#password").val();
+
+            if (username === "" || password === "") return false;
+
+            $.ajax({
+                type: "POST",
+                url: validateUrl,
+                data: JSON.stringify({'user': username, 'password': password}),
+                dataType: "json",
+                contentType: "application/json",
+                success: function (data) {
+                    console.log(data);
+                    var errMsg = data.errorMsg;
+                    if (errMsg === 0) {
+                        $("#hidden_button").click();
+                        console.log("success");
+                        return true;
+                    } else if (errMsg === 1) {
+                        alert("The user does not exist");
+                        return false;
+                    } else if (errMsg === 2) {
+                        alert("wrong password")
+                    } else {
+                        alert("An unknown error has occurred, please contact the administrator");
+                        return false;
+                    }
+                }
+            })
+        })
+    })
+</script>
+
+<style type="text/css">
+    .demo {
+        padding: 20px 0;
+        background: linear-gradient(to right, #E5CFAA 50%, #7AB6B6 50%);
+    }
+
+    .form-horizontal {
+        background-color: #fff;
+        font-family: 'Arimo', sans-serif;
+        text-align: center;
+        padding: 50px 30px 50px;
+        box-shadow: 12px 12px 0 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .form-horizontal .heading {
+        color: #555;
+        font-size: 30px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: capitalize;
+        margin: 0 0 50px 0;
+    }
+
+    .form-horizontal .form-group {
+        margin: 0 auto 30px;
+        position: relative;
+    }
+
+    .form-horizontal .form-group:nth-last-child(2) {
+        margin-bottom: 20px;
+    }
+
+    .form-horizontal .form-group:last-child {
+        margin: 0;
+    }
+
+    .form-horizontal .form-group > i {
+        color: #999;
+        transform: translateY(-50%);
+        position: absolute;
+        left: 5px;
+        top: 50%;
+    }
+
+    .form-horizontal .form-control {
+        color: #7AB6B6;
+        background-color: #fff;
+        font-size: 17px;
+        letter-spacing: 1px;
+        height: 40px;
+        padding: 5px 10px 2px 25px;
+        box-shadow: 0 0 0 0 transparent;
+        border: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 0;
+        display: inline-block;
+    }
+
+    .form-control::placeholder {
+        color: rgba(0, 0, 0, 0.2);
+        font-size: 16px;
+    }
+
+    .form-horizontal .form-control:focus {
+        border-bottom: 1px solid #7AB6B6;
+        box-shadow: none;
+    }
+
+    .form-horizontal .btn {
+        color: #7AB6B6;
+        background-color: #EDF6F5;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        border-radius: 5px;
+        width: 50%;
+        height: 45px;
+        padding: 7px 30px;
+        margin: 0 auto 25px;
+        border: none;
+        display: block;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .form-horizontal .btn:focus,
+    .form-horizontal .btn:hover {
+        color: #fff;
+        background-color: #7AB6B6;
+    }
+
+    .form-horizontal .btn:before,
+    .form-horizontal .btn:after {
+        content: '';
+        background-color: #7AB6B6;
+        height: 50%;
+        width: 2px;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        z-index: 1;
+        transition: all 0.3s;
+    }
+
+    .form-horizontal .btn:after {
+        bottom: auto;
+        top: 0;
+        left: auto;
+        right: 0;
+    }
+
+    .form-horizontal .btn:hover:before,
+    .form-horizontal .btn:hover:after {
+        height: 100%;
+        width: 50%;
+        opacity: 0;
+    }
+
+    .form-horizontal .create_account {
+        color: #D6BC8B;
+        font-size: 16px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .form-horizontal .create_account:hover {
+        color: #7AB6B6;
+        text-decoration: none;
+    }
+</style>
+<style type="text/css">
+
+    [class^="icon-"], [class*=" icon-"] {
+        font-family: 'icomoon', serif;
+        speak: none;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+
+        /* Better Font Rendering =========== */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body, html {
+        font-size: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Reset */
+    *,
+    *:after,
+    *:before {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    /* Clearfix hack by Nicolas Gallagher: http://nicolasgallagher.com/micro-clearfix-hack/ */
+    .clearfix:before,
+    .clearfix:after {
+        content: " ";
+        display: table;
+    }
+
+    .clearfix:after {
+        clear: both;
+    }
+
+    body {
+        background: #494A5F;
+        font-weight: 500;
+        font-size: 1.05em;
+        font-family: "Microsoft YaHei", "Segoe UI", "Lucida Grande", Helvetica, Arial, sans-serif;
+    }
+
+    .htmleaf-links a {
+        color: rgba(20, 20, 20, 0.6);
+        outline: none;
+        text-decoration: none;
+        -webkit-transition: 0.2s;
+        transition: 0.2s;
+    }
+
+    .htmleaf-links a:hover, .htmleaf-links a:focus {
+        color: #c9c9c9;
+        text-decoration: none;
+    }
+
+    .htmleaf-container {
+        margin: 0 auto;
+    }
+
+    .bgcolor-1 {
+        background: #f0efee;
+    }
+
+    .bgcolor-2 {
+        background: #f9f9f9;
+    }
+
+    .bgcolor-3 {
+        background: #e8e8e8;
+    }
+
+    /*light grey*/
+    .bgcolor-4 {
+        background: #2f3238;
+        color: #fff;
+    }
+
+    /*Dark grey*/
+    .bgcolor-5 {
+        background: #df6659;
+        color: #521e18;
+    }
+
+    /*pink1*/
+    .bgcolor-6 {
+        background: #2fa8ec;
+    }
+
+    /*sky blue*/
+    .bgcolor-7 {
+        background: #d0d6d6;
+    }
+
+    /*White tea*/
+    .bgcolor-8 {
+        background: #3d4444;
+        color: #fff;
+    }
+
+    /*Dark grey2*/
+    .bgcolor-9 {
+        background: #ef3f52;
+        color: #fff;
+    }
+
+    /*pink2*/
+    .bgcolor-10 {
+        background: #64448f;
+        color: #fff;
+    }
+
+    /*Violet*/
+    .bgcolor-11 {
+        background: #3755ad;
+        color: #fff;
+    }
+
+    /*dark blue*/
+    .bgcolor-12 {
+        background: #3498DB;
+        color: #fff;
+    }
+
+    /*light blue*/
+    .bgcolor-20 {
+        background: #494A5F;
+        color: #D5D6E2;
+    }
+
+    /* Header */
+    .htmleaf-header {
+        padding: 1em 190px 1em;
+        letter-spacing: -1px;
+        text-align: center;
+        background: #66677c;
+    }
+
+    .htmleaf-header h1 {
+        color: #D5D6E2;
+        font-weight: 600;
+        font-size: 2em;
+        line-height: 1;
+        margin-bottom: 0;
+    }
+
+    .htmleaf-header h1 span {
+        display: block;
+        font-size: 60%;
+        font-weight: 400;
+        padding: 0.8em 0 0.5em 0;
+        color: #c3c8cd;
+    }
+
+    /*nav*/
+    .htmleaf-demo a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .htmleaf-demo {
+        width: 100%;
+        padding-bottom: 1.2em;
+    }
+
+    .htmleaf-demo a {
+        display: inline-block;
+        margin: 0.5em;
+        padding: 0.6em 1em;
+        border: 3px solid #fff;
+        font-weight: 700;
+    }
+
+    .htmleaf-demo a:hover {
+        opacity: 0.6;
+    }
+
+    .htmleaf-demo a.current {
+        background: #1d7db1;
+        color: #fff;
+    }
+
+    /* Top Navigation Style */
+    .htmleaf-links {
+        position: relative;
+        display: inline-block;
+        white-space: nowrap;
+        font-size: 1.3em;
+        text-align: center;
+    }
+
+    .htmleaf-links::after {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        margin-left: -1px;
+        width: 2px;
+        height: 100%;
+        background: #dbdbdb;
+        content: '';
+        -webkit-transform: rotate3d(0, 0, 1, 22.5deg);
+        transform: rotate3d(0, 0, 1, 22.5deg);
+    }
+
+    .htmleaf-icon {
+        display: inline-block;
+        margin: 0.5em;
+        padding: 0em 0;
+        width: 1.5em;
+        text-decoration: none;
+    }
+
+    .htmleaf-icon span {
+        display: none;
+    }
+
+    .htmleaf-icon:before {
+        margin: 0 5px;
+        text-transform: none;
+        font-weight: normal;
+        font-style: normal;
+        font-variant: normal;
+        font-family: 'icomoon';
+        line-height: 1;
+        speak: none;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* footer */
+    .htmleaf-footer {
+        width: 100%;
+        padding-top: 10px;
+    }
+
+    .htmleaf-small {
+        font-size: 0.8em;
+    }
+
+    .center {
+        text-align: center;
+    }
+
+    /****/
+    .related {
+        color: #fff;
+        background: #494A5F;
+        text-align: center;
+        font-size: 1.25em;
+        padding: 0.5em 0;
+        overflow: hidden;
+    }
+
+    .related > a {
+        vertical-align: top;
+        width: calc(100% - 20px);
+        max-width: 340px;
+        display: inline-block;
+        text-align: center;
+        margin: 20px 10px;
+        padding: 25px;
+        font-family: "Microsoft YaHei", "宋体", "Segoe UI", "Lucida Grande", Helvetica, Arial, sans-serif, FreeSans, Arimo;
+    }
+
+    .related a {
+        display: inline-block;
+        text-align: left;
+        margin: 20px auto;
+        padding: 10px 20px;
+        opacity: 0.8;
+        -webkit-transition: opacity 0.3s;
+        transition: opacity 0.3s;
+        -webkit-backface-visibility: hidden;
+        text-decoration: none;
+    }
+
+    .related a:hover,
+    .related a:active {
+        opacity: 1;
+    }
+
+    .related a img {
+        max-width: 100%;
+        opacity: 0.8;
+        border-radius: 4px;
+    }
+
+    .related a:hover img,
+    .related a:active img {
+        opacity: 1;
+    }
+
+    .related h3 {
+        font-family: "Microsoft YaHei", sans-serif;
+        font-size: 1.2em
+    }
+
+    .related a h3 {
+        font-size: 0.85em;
+        font-weight: 300;
+        margin-top: 0.15em;
+        color: #fff;
+    }
+
+    /* icomoon */
+    .icon-htmleaf-home-outline:before {
+        content: "\e5000";
+    }
+
+    .icon-htmleaf-arrow-forward-outline:before {
+        content: "\e5001";
+    }
+
+    @media screen and (max-width: 1024px) {
+        .htmleaf-header {
+            padding: 2em 10% 2em;
+        }
+
+        .htmleaf-header h1 {
+            font-size: 1.4em;
+        }
+
+        .htmleaf-links {
+            font-size: 1.0em
+        }
+    }
+
+    @media screen and (max-width: 960px) {
+        .htmleaf-header {
+            padding: 2em 10% 2em;
+        }
+
+        .htmleaf-header h1 {
+            font-size: 1.2em;
+        }
+
+        .htmleaf-links {
+            font-size: 1.0em
+        }
+
+        .related h3 {
+            font-size: 1em;
+        }
+
+        .related a h3 {
+            font-size: 0.8em;
+        }
+    }
+
+    @media screen and (max-width: 766px) {
+        .htmleaf-header h1 {
+            font-size: 1.3em;
+        }
+
+        .htmleaf-links {
+            font-size: 1.0em
+        }
+    }
+
+    @media screen and (max-width: 640px) {
+        .htmleaf-header {
+            padding: 2em 10% 2em;
+        }
+
+        .htmleaf-header h1 {
+            font-size: 1em;
+        }
+
+        .htmleaf-links {
+            font-size: 0.7em
+        }
+
+        .related h3 {
+            font-size: 0.8em;
+        }
+
+        .related a h3 {
+            font-size: 0.6em;
+        }
+    }
+</style>
+</html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cygao.dao.UserRepository">
+
+<!--    <resultMap id="UserResultMap" type="com.cygao.entity.User">-->
+<!--        <id property="id" column="id"/>-->
+<!--        <result property="name" column="name"/>-->
+<!--        <result property="createdAt" column="created_at" javaType="java.util.Date" jdbcType="TIMESTAMP"/>-->
+<!--        <collection property="roles"-->
+<!--    </resultMap>-->
+    
+    <select id="findUser" resultType="com.cygao.entity.User">
+        SELECT id, name, password FROM user WHERE name = #{name} and password = #{password};
+    </select>
+
+    <select id="findUserByName" resultType="com.cygao.entity.User">
+        SELECT id, name, password FROM user WHERE (name = #{name});
+    </select>
+
+    <select id="findUserById" resultType="com.cygao.entity.User">
+        SELECT id, name, password FROM user WHERE id = #{id};
+    </select>
+
+    <select id="findIdByName" resultType="int">
+        SELECT id FROM user where name = #{name};
+    </select>
+
+    <insert id="addUser">
+        INSERT INTO user(name, password) VALUES (#{name}, #{password})
+    </insert>
+
+</mapper>

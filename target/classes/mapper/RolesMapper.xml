@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cygao.dao.RolesRepository">
+
+    <insert id="addRole">
+        INSERT INTO roles(role, comment) VALUES (#{role}, #{comment});
+    </insert>
+
+    <insert id="addUser" parameterType="com.cygao.entity.User">
+        INSERT INTO user_roles(user_id, roles) VALUES
+        <foreach collection="user.roles" item="role" separator=",">
+            (#{user.id}, #{role.id})
+        </foreach>
+    </insert>
+
+    <insert id="addRoleForUser">
+        INSERT INTO user_roles(user_id, roles) VALUES (#{user.id}, #{role.id});
+    </insert>
+
+    <select id="findRoleByName" resultType="com.cygao.entity.UserRole">
+        select id, role, comment from roles where role = #{role} limit 1;
+    </select>
+
+    <select id="findRoleById" resultType="com.cygao.entity.UserRole">
+        select id, role from roles where id = #{id} limit 1;
+    </select>
+
+    <select id="findAllRoles" resultType="com.cygao.entity.UserRole">
+        select * from roles;
+    </select>
+
+    <select id="findUserRoles" parameterType="com.cygao.entity.User" resultType="com.cygao.entity.UserRole">
+        select id, role from roles where id in (select roles from user_roles where user_id = #{user.id});
+    </select>
+
+
+</mapper>

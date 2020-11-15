@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+>
+<head>
+    <title>FreeTalk在线聊天室</title>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+</head>
+<body onload="setConnected(false)" onbeforeunload="onClose()">
+<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
+    enabled. Please enable
+    Javascript and reload this page!</h2></noscript>
+<div id="main-content" class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <table id="online" class="table table-striped" disabled="">
+                <thead>
+                <tr>
+                    <th>在线用户数为：</th>
+                    <h5 id="count">0</h5>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="connect">WebSocket connection:</label>
+                    <button id="connect" class="btn btn-default" type="submit">Connect</button>
+                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect
+                    </button>
+                    <a id="home" class="btn btn-default" type="submit" href="/home">Home</a>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="message">Send your message:</label>
+                    <input type="text" id="message" class="form-control" placeholder="Your message here...">
+                </div>
+                <button id="send" class="btn btn-default" type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="conversation" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Messages</th>
+                </tr>
+                </thead>
+                <tbody id="greetings">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    var stompClient = null;
+    var username = '[[${#httpServletRequest.remoteUser}]]';
+
+    function setConnected(connected) {
+        $("#connect").prop("disabled", connected);
+        $("#disconnect").prop("disabled", !connected);
+        $("#message").prop("disabled", !connected);
+        if (connected) {
+            $("#conversation").show();
+            $("#online").show();
+        } else {
+            $("#conversation").hide();
+            $("#online").hide();
+        }
+        $("#greetings").html("");
+        if (stompClient != null) stompClient.send("/app/count", {}, JSON.stringify({
+            'isAdd': connected ? 1 : 0,
+            'user': username
+        }));
+    }
+
+    function connect() {
+        var socket = new SockJS('/websocket');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/greetings', function (greeting) {
+                showMessage(JSON.parse(greeting.body));
+            });
+            stompClient.subscribe('/topic/count', function (count) {
+                changeOnlineCount(JSON.parse(count.body));
+            });
+            setConnected(true);
+        });
+    }
+
+    function disconnect() {
+        if (stompClient !== null) {
+            setConnected(false);
+            console.log("Disconnected");
+            stompClient.disconnect();
+        }
+    }
+
+    function sendMessage() {
+        if (stompClient != null && $("#message").val() !== "") {
+            stompClient.send("/app/hello", {}, JSON.stringify({
+                'user': username,
+                'message': $("#message").val()
+            }));
+            $("#message").val("");
+        }
+    }
+
+    function showMessage(message) {
+        $("#greetings").append(`<tr><td>${message.date} [${message.user}]: ${message.content}</td></tr>`);
+    }
+
+    function changeOnlineCount(count) {
+        console.log("GOGO" + count.toString());
+        // $("#count").change(count.count);
+        document.getElementById("count").innerHTML = `${count.count}`;
+    }
+
+    function onClose() {
+        setConnected(false);
+    }
+
+    $(function () {
+        $("form").on('submit', function (e) {
+            e.preventDefault();
+        });
+        $("#connect").click(function () {
+            connect();
+        });
+        $("#disconnect").click(function () {
+            disconnect();
+        });
+        $("#send").click(function () {
+            sendMessage();
+        });
+    });
+</script>
+<style type="text/css">
+    body {
+        background-color: #f5f5f5;
+    }
+
+    #main-content {
+        max-width: 940px;
+        padding: 2em 3em;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+    }
+</style>
+</html>

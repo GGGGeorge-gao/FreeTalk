@@ -1,0 +1,22 @@
+server:
+  port: 8848
+
+spring:
+  datasource:
+
+    username: {username}
+    password: {Password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://{YourMySQLHost}:3306/FreeTalk?serverTimezone=UTC&characterEncoding=utf8
+
+    schema: classpath:sql/schema.sql
+    data: classpath:sql/data.sql
+    sql-script-encoding: utf-8
+    initialization-mode: always
+
+  resources:
+    static-locations: classpath:/static/, classpath:/static/images/, classpath:/static/images/*
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.cygao.entity

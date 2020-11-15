@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn">
+<head>
+    <title>FreeTalk在线聊天室</title>
+</head>
+<body>
+<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+<h1>Welcome to FreeTalk...</h1>
+<h2><a th:href="@{/}">Let's go to have a talk now!!</a></h2>
+
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Sign Out"/>
+</form>
+
+<img th:src="@{/images/dinosaurs.jpg}">
+
+
+<br><a th:href="@{/login}">Login now !</a><br/>
+<a th:href="@{/register}">No account yet? Register for one now !!!!</a>
+</body>
+</html>
