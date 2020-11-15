@@ -30,9 +30,9 @@
 
 - 传输协议：[Stomp](http://stomp.github.io/)
 
-- > SockJS的一大好处在于提供了浏览器兼容性。优先使用原生WebSocket，如果在不支持websocket的浏览器中，会自动降为轮询的方式。 
-
 - 模板引擎：[Thymeleaf](https://www.thymeleaf.org/documentation.html)
+
+- > SockJS的一大好处在于提供了浏览器兼容性。优先使用原生WebSocket，如果在不支持websocket的浏览器中，会自动降为轮询的方式。 
 
 - SockJS
 
