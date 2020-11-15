@@ -175,3 +175,6 @@ WebSocket 请求响应客户端服务器交互图
 2. Spring-framework官方文档WebSocket部分（极力推荐！可以仔细研究）：https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#websocket
 
 3. 使用WebSocket构建一个简易的交互式web应用程序官方教程（推荐）：https://spring.io/guides/gs/messaging-stomp-websocket/
+
+## 六、联系
+Email: cygao0828@foxmail.com
