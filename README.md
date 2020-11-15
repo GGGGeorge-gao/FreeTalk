@@ -14,11 +14,9 @@
 
 - 核心框架：SpringBoot  v2.3.4
 - 用户鉴权：Spring Security
-- 
 - 持久层框架：MyBatis   v3.4.2
 - 数据库：MySQL  v8.0.21
 - JSON解析库：FastJson  v1.2.70
-
 - 测试框架：JUnit
 - 加密：BCrypt加密
 
